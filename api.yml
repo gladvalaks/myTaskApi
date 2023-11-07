@@ -1,0 +1,135 @@
+openapi: '3.0.2'
+
+info:
+  title: API
+  version: '1.0'
+
+servers:
+  - url: https://api.server.test/v1
+
+paths:
+  /priorities:
+    get:
+      summary: Возвращает виды важности
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/AllTaskPriorities"
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+  /tasks:
+    get:
+      summary: Возвращает все задания пользователя
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: 
+                $ref: "#/components/schemas/AllTasks"
+        '404':
+          $ref: "#/components/responses/NotFound"
+    post:
+      summary: Создание задачи
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                task_body:
+                  $ref: "#/components/schemas/TaskBody"
+      responses:
+        '200':
+          description: OK
+          $ref: "#/components/responses/TaskOK"
+ 
+  /tasks/{task_id}:
+    delete:
+      summary: Удаление задачи
+      responses:
+        '200':
+          $ref: "#/components/responses/TaskOK"
+        '404':
+          $ref: "#/components/responses/NotFound"
+    put:
+      summary: Изменение важности задачи
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                task_body:
+                  $ref: "#/components/schemas/TaskBody"
+      responses:
+        '200':
+          description: OK
+        '404':
+          $ref: "#/components/responses/NotFound"
+
+  /tasks/{task_id}/complete:
+    patch:
+      summary: Изменение статуса задачи на выполненную
+      responses:
+        '200':
+          description: OK
+          $ref: "#/components/responses/TaskOK"
+        '404':
+          $ref: "#/components/responses/NotFound"
+          
+
+    
+components:
+  responses:
+    NotFound:
+      description: "Данные не найдены"
+    TaskOK:
+      description: "OK"
+      content:
+        application/json:
+          schema: 
+            $ref: "#/components/schemas/Task"
+  schemas:
+    Task:
+      type: object
+      properties:
+        id: {type: integer}
+        task_body:
+          $ref: "#/components/schemas/TaskBody"
+        created_at: {type: string}
+        finished_at: {type: string}
+
+    TaskBody:
+      type: object
+      properties:
+        title: {type: string}
+        description: {type: string}
+        coins: {type: integer}
+        is_daily: {type: boolean}
+        task_priority_id: {type: integer}
+
+    AllTasks:
+      type: array
+      items: 
+        $ref: "#/components/schemas/Task"
+
+    TaskPriority:
+      type: object
+      properties:
+        id: {type: integer}
+        title: {type: string}
+        order: {type: integer}
+
+    AllTaskPriorities:
+      type: array
+      items:
+        $ref: "#/components/schemas/TaskPriority"
+
+
+
+
