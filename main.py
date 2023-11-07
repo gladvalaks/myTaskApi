@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from fastapi import FastAPI, Response, Request
+from fastapi import FastAPI, Response, Request,Body
 from fastapi.responses import JSONResponse
 from jose import JWTError, jwt
 from Consts import *
@@ -78,12 +78,14 @@ def get_priorities():
 
 
 @app.post("/auth")
-def auth(user_data: Models.UserDataForAuth):
-    user_id = db.auth(user_data.email, user_data.password)
+def auth(data = Body()):
+    print(data)
+    user_id = db.auth(data["email"], data["password"])
     if user_id:
         response = JSONResponse(content={"response": "OK"})
-        response.set_cookie(key="token", value=create_access_token(data={"user_id": user_id}))
+        response.set_cookie(key="token", value=create_access_token(data={"user_id": user_id}),secure=False,samesite=None)
         return response
+
 
 
 @app.post("/register")
