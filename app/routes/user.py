@@ -3,9 +3,10 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 import Models.requests.user as models
 import database.functions.user as db
-import taskApi.App.token as token
+import app.token as token
 
 router = APIRouter()
+
 @router.post("/api/auth")
 def auth(user:models.UserForAuth, response:Response):
     user_id = db.auth(user.email, user.password)    
@@ -24,7 +25,7 @@ def auth(user:models.UserForAuth, response:Response):
 
 
 @router.post("/api/register")
-def register(user_data: models.UserDataForRegistration, response:Response):
+def register(user_data: models.UserForRegistration, response:Response):
     try:
         if db.check_user_by_email(user_data.email):
             response.status_code = status.HTTP_409_CONFLICT
